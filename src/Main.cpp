@@ -7,18 +7,10 @@
 #include <map>
 #include <string>
 
+#include "Engine.h"
+
 // Used in command parsing
 const std::string whitespaces = "\t\n\r\f\v";
-
-// A typedef for methods that take two std::string references and return a boolean
-typedef bool ( *KeywordHandler )( const std::string&, const std::string& );
-
-// A const array of keywords to KeywordHandler
-std::map<std::string, KeywordHandler> handlerMap;
-
-// Keyword handlers
-bool processQuit( const std::string& keyword, const std::string& args );
-bool processUCI( const std::string& keyword, const std::string& args );
 
 /// <summary>
 /// Entrypoint
@@ -28,8 +20,8 @@ bool processUCI( const std::string& keyword, const std::string& args );
 /// <returns>0 if successful</returns>
 int main( int argc, char** argv )
 {
-    handlerMap[ "quit" ] = processQuit;
-    handlerMap[ "uci" ] = processUCI;
+    // Assume all is well and that we're in UCI mode
+    Engine engine( std::cout );
 
     // Read from stdin but then sanitize the input
     std::string line;
@@ -69,26 +61,16 @@ int main( int argc, char** argv )
         // Convert the keyword to lowercase
         std::transform( keyword.begin(), keyword.end(), keyword.begin(), ::tolower );
 
-        // Process the keyword and continue until we're told to exit
-        if ( handlerMap.find( keyword ) != handlerMap.end() )
+#if __DEBUG
+            std::cerr << "Input: " << keyword << " " << arguments << std::endl;
+#endif 
+
+        // Process the command and loop until we're told to exit
+        if ( !engine.processCommand( keyword, arguments ) )
         {
-            // Call the appropriate handler
-            if ( !handlerMap[ keyword ]( keyword, arguments ) )
-            {
-                break;
-            }
+            break;
         }
     }
 
     return 0;
-}
-
-bool processQuit( const std::string& keyword, const std::string& args )
-{
-    return false;
-}
-
-bool processUCI( const std::string& keyword, const std::string& args )
-{
-    return true;
 }
