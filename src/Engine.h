@@ -9,7 +9,7 @@ class Engine
 {
 public:
     // Private constructor to prevent instantiation
-    Engine( const std::ostream& outputStream ) :
+    Engine( std::ostream& outputStream ) :
         board( Board() ),
         outputStream( outputStream )
     {
@@ -30,7 +30,7 @@ private:
     Board board;
 
     // Use to communicate back to the caller
-    const std::ostream& outputStream;
+    std::ostream& outputStream;
 
     // A const array of keywords to KeywordHandler
     std::map<std::string, KeywordHandler> handlerMap;
@@ -38,4 +38,7 @@ private:
     // Keyword handlers
     bool processQuit( const std::string& keyword, const std::string& args );
     bool processUCI( const std::string& keyword, const std::string& args );
+
+    // Helper functions
+    void sendID( const std::string& name, const std::string& author, const std::string& version );
 };

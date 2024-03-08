@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "Engine.h"
+#include "EngineDetails.h"
 
 bool Engine::processCommand( const std::string& keyword, const std::string& args )
 {
@@ -39,6 +40,13 @@ bool Engine::processUCI( const std::string& keyword, const std::string& args )
     std::cerr << "UCI" << std::endl;
 #endif
 
+    sendID( EngineDetails::EngineName(), EngineDetails::EngineAuthor(), EngineDetails::EngineVersion() );
+
     return true;
 }
 
+void Engine::sendID( const std::string& name, const std::string& author, const std::string& version )
+{
+    outputStream << "id name " << name << " " << version << std::endl;
+    outputStream << "id author " << author << std::endl;
+}
