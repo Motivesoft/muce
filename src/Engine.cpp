@@ -3,6 +3,17 @@
 #include "Engine.h"
 #include "EngineDetails.h"
 
+Engine::Engine( std::ostream& outputStream ) :
+    board( Board() ),
+    outputStream( outputStream )
+{
+    handlerMap[ "quit" ] = &Engine::processQuit;
+    handlerMap[ "uci" ] = &Engine::processUCI;
+    handlerMap[ "perft" ] = &Engine::processPerft;
+
+    sendInfo( "Starting " + EngineDetails::EngineName() + " " + EngineDetails::EngineMajorVersion() );
+}
+
 bool Engine::processCommand( const std::string& keyword, const std::string& args )
 {
     // Process the keyword and continue until we're told to exit
@@ -42,6 +53,20 @@ bool Engine::processUCI( const std::string& keyword, const std::string& args )
 
     sendID( EngineDetails::EngineName(), EngineDetails::EngineAuthor(), EngineDetails::EngineVersion() );
 
+    // TODO send options
+    // TODO copy protection and/or registration
+
+    sendUCIOK();
+
+    return true;
+}
+
+bool Engine::processPerft( const std::string& keyword, const std::string& args )
+{
+#if _DEBUG
+    std::cerr << "Perft" << std::endl;
+#endif
+
     return true;
 }
 
@@ -49,4 +74,19 @@ void Engine::sendID( const std::string& name, const std::string& author, const s
 {
     outputStream << "id name " << name << " " << version << std::endl;
     outputStream << "id author " << author << std::endl;
+}
+
+void Engine::sendUCIOK()
+{
+    outputStream << "uciok" << std::endl;
+}
+
+void Engine::sendReadyOK()
+{
+    outputStream << "readyok" << std::endl;
+}
+
+void Engine::sendInfo( const std::string& info )
+{
+    outputStream << "info string " << info << std::endl;
 }

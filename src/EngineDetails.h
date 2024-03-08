@@ -9,6 +9,7 @@ public:
     // Create methods to return engine details
     static std::string EngineName();
     static std::string EngineAuthor();
+    static std::string EngineMajorVersion();
     static std::string EngineVersion();
 
 private:
