@@ -98,7 +98,7 @@ bool Engine::processPerft( const std::string& keyword, const std::string& args )
     std::cerr << "Perft" << std::endl;
 #endif
 
-    board.perft( args );
+    //board.perft( args );
 
     return true;
 }

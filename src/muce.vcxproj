@@ -135,11 +135,13 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EngineDetails.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Perft.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EngineDetails.h" />
+    <ClInclude Include="Perft.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
