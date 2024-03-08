@@ -12,13 +12,20 @@ public:
     Engine( std::ostream& outputStream );
 
     // A typedef for methods that take two std::string references and return a boolean
-    typedef bool ( Engine::*KeywordHandler )( const std::string&, const std::string& );
+    typedef bool ( Engine::* KeywordHandler )( const std::string&, const std::string& );
 
     bool processCommand( const std::string& keyword, const std::string& args );
 
 private:
     // Delete the copy constructor and assignment operator
     Engine( const Engine& ) = delete;
+
+    enum class RegistrationStatus
+    {
+        Checking,
+        OK,
+        Error
+    };
 
     // Single board instance for this engine instance
     Board board;
@@ -29,16 +36,25 @@ private:
     // A const array of keywords to KeywordHandler
     std::map<std::string, KeywordHandler> handlerMap;
 
+    // Registration status
+    RegistrationStatus registrationStatus;
+
     // UCI Keyword handlers
     bool processQuit( const std::string& keyword, const std::string& args );
     bool processUCI( const std::string& keyword, const std::string& args );
+    bool processIsReady( const std::string& keyword, const std::string& args );
+    bool processUCINewGame( const std::string& keyword, const std::string& args );
 
     // Unofficial keyword handlers
     bool processPerft( const std::string& keyword, const std::string& args );
 
-    // Helper functions
+    // Broadcast functions
     void sendID( const std::string& name, const std::string& author, const std::string& version );
     void sendUCIOK();
     void sendReadyOK();
     void sendInfo( const std::string& info );
+    void sendRegistration( RegistrationStatus status );
+
+    // Helper functions
+    void setRegistrationStatus( RegistrationStatus status );
 };

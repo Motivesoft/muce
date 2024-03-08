@@ -5,10 +5,13 @@
 
 Engine::Engine( std::ostream& outputStream ) :
     board( Board() ),
-    outputStream( outputStream )
+    outputStream( outputStream ),
+    registrationStatus( RegistrationStatus::Checking )
 {
     handlerMap[ "quit" ] = &Engine::processQuit;
     handlerMap[ "uci" ] = &Engine::processUCI;
+    handlerMap[ "isready" ] = &Engine::processIsReady;
+    handlerMap[ "ucinewgame" ] = &Engine::processUCINewGame;
     handlerMap[ "perft" ] = &Engine::processPerft;
 
     sendInfo( "Starting " + EngineDetails::EngineName() + " " + EngineDetails::EngineMajorVersion() );
@@ -54,9 +57,37 @@ bool Engine::processUCI( const std::string& keyword, const std::string& args )
     sendID( EngineDetails::EngineName(), EngineDetails::EngineAuthor(), EngineDetails::EngineVersion() );
 
     // TODO send options
-    // TODO copy protection and/or registration
 
     sendUCIOK();
+
+    setRegistrationStatus( RegistrationStatus::Checking );
+
+    // TODO Test for registration and modify this accordingly
+    setRegistrationStatus( RegistrationStatus::OK );
+
+    return true;
+}
+
+bool Engine::processIsReady( const std::string& keyword, const std::string& args )
+{
+#if _DEBUG
+    std::cerr << "IsReady" << std::endl;
+#endif
+
+    // TODO check we are actually ready
+
+    sendReadyOK();
+
+    return true;
+}
+
+bool Engine::processUCINewGame( const std::string& keyword, const std::string& args )
+{
+#if _DEBUG
+    std::cerr << "UCINewGame" << std::endl;
+#endif
+
+    // TODO Stop and reset everything
 
     return true;
 }
@@ -66,6 +97,8 @@ bool Engine::processPerft( const std::string& keyword, const std::string& args )
 #if _DEBUG
     std::cerr << "Perft" << std::endl;
 #endif
+
+    board.perft( args );
 
     return true;
 }
@@ -89,4 +122,33 @@ void Engine::sendReadyOK()
 void Engine::sendInfo( const std::string& info )
 {
     outputStream << "info string " << info << std::endl;
+}
+
+void Engine::sendRegistration( RegistrationStatus status )
+{
+    outputStream << "registration ";
+
+    switch( status )
+    {
+    case RegistrationStatus::Checking:
+        outputStream << "checking";
+        break;
+
+    case RegistrationStatus::OK:
+        outputStream << "ok";
+        break;
+
+    case RegistrationStatus::Error:
+        outputStream << "error";
+        break;
+    }
+
+    outputStream << std::endl;
+}
+
+void Engine::setRegistrationStatus( RegistrationStatus status )
+{
+    registrationStatus = status;
+
+    sendRegistration( status );
 }
