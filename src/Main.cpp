@@ -11,7 +11,7 @@
 const std::string whitespaces = "\t\n\r\f\v";
 
 // A typedef for methods that take two std::string references and return a boolean
-typedef bool (*KeywordHandler)( const std::string&, const std::string& );
+typedef bool ( *KeywordHandler )( const std::string&, const std::string& );
 
 // A const array of keywords to KeywordHandler
 std::map<std::string, KeywordHandler> handlerMap;
@@ -28,15 +28,15 @@ bool processUCI( const std::string& keyword, const std::string& args );
 /// <returns>0 if successful</returns>
 int main( int argc, char** argv )
 {
-    handlerMap["quit"] = processQuit;
-    handlerMap["uci"] = processUCI;
+    handlerMap[ "quit" ] = processQuit;
+    handlerMap[ "uci" ] = processUCI;
 
     // Read from stdin but then sanitize the input
     std::string line;
-    while (std::getline(std::cin, line) )
+    while ( std::getline( std::cin, line ) )
     {
         // Iterator over line and replace any of the following with spaces: \t\n\r\f\v
-        for (std::string::iterator it = line.begin(); it != line.end(); ++it)
+        for ( std::string::iterator it = line.begin(); it != line.end(); ++it )
         {
             if ( whitespaces.find( *it ) != std::string::npos )
             {
@@ -44,26 +44,26 @@ int main( int argc, char** argv )
             }
         }
 
+        // Trim leading spaces from line
+        line = line.substr( line.find_first_not_of( " " ) );
+
+        // Trim trailing spaces from line
+        line = line.substr( 0, line.find_last_not_of( " " ) + 1 );
+
         // Change any instance of multiple spaces to single space
-        while( line.find( "  " ) != std::string::npos )
+        while ( line.find( "  " ) != std::string::npos )
         {
             line.replace( line.find( "  " ), 2, " " );
         }
 
-        // Trim leading spaces from line
-        line = line.substr(line.find_first_not_of(" "));
+        // Extract the first word into a keyword string
+        std::string keyword = line.substr( 0, line.find_first_of( " " ) );
 
-        // Trim trailing spaces from line
-        line = line.substr(0, line.find_last_not_of(" ")+1);
-
-        // Extract the first word into one string and the remainder into another
-        std::string keyword = line.substr(0, line.find_first_of(" "));
-        
-        // If line has a space, extract the remainder, otherwise leave it blank
-        std::string args;
+        // If line has more text after the keyword, extract the remainder as args, otherwise leave as blank
+        std::string arguments;
         if ( line.find_first_of( " " ) != std::string::npos )
         {
-            args = line.substr( line.find_first_of( " " ) + 1 );
+            arguments = line.substr( line.find_first_of( " " ) + 1 );
         }
 
         // Convert the keyword to lowercase
@@ -72,7 +72,8 @@ int main( int argc, char** argv )
         // Process the keyword and continue until we're told to exit
         if ( handlerMap.find( keyword ) != handlerMap.end() )
         {
-            if ( !handlerMap[ keyword ]( keyword, args ) )
+            // Call the appropriate handler
+            if ( !handlerMap[ keyword ]( keyword, arguments ) )
             {
                 break;
             }
