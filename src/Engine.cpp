@@ -2,6 +2,7 @@
 
 #include "Engine.h"
 #include "EngineDetails.h"
+#include "Perft.h"
 
 Engine::Engine( std::ostream& outputStream ) :
     board( Board() ),
@@ -98,7 +99,8 @@ bool Engine::processPerft( const std::string& keyword, const std::string& args )
     std::cerr << "Perft" << std::endl;
 #endif
 
-    //board.perft( args );
+    Perft perft( std::cout );
+    perft.runPerft( args );
 
     return true;
 }
