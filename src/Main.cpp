@@ -48,8 +48,9 @@ int main( int argc, char** argv )
             line.replace( line.find( "  " ), 2, " " );
         }
 
-        // Extract the first word into a keyword string
+        // Extract the first word into a lowercase keyword string
         std::string keyword = line.substr( 0, line.find_first_of( " " ) );
+        std::transform( keyword.begin(), keyword.end(), keyword.begin(), ::tolower );
 
         // If line has more text after the keyword, extract the remainder as args, otherwise leave as blank
         std::string arguments;
@@ -58,11 +59,8 @@ int main( int argc, char** argv )
             arguments = line.substr( line.find_first_of( " " ) + 1 );
         }
 
-        // Convert the keyword to lowercase
-        std::transform( keyword.begin(), keyword.end(), keyword.begin(), ::tolower );
-
 #if __DEBUG
-            std::cerr << "Input: " << keyword << " " << arguments << std::endl;
+            std::cerr << "Input: " << keyword << " [" << arguments << "]" << std::endl;
 #endif 
 
         // Process the command and loop until we're told to exit
