@@ -126,26 +126,8 @@ void Engine::sendInfo( const std::string& info )
     outputStream << "info string " << info << std::endl;
 }
 
-void Engine::sendRegistration( RegistrationStatus status )
-{
-    outputStream << "registration ";
-
-    switch( status )
-    {
-    case RegistrationStatus::Checking:
-        outputStream << "checking";
-        break;
-
-    case RegistrationStatus::OK:
-        outputStream << "ok";
-        break;
-
-    case RegistrationStatus::Error:
-        outputStream << "error";
-        break;
-    }
-
-    outputStream << std::endl;
+void Engine::sendRegistration( const RegistrationStatus status ) {
+    outputStream << "registration " << statusMap.at(status) << std::endl;
 }
 
 void Engine::setRegistrationStatus( RegistrationStatus status )

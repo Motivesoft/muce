@@ -16,16 +16,16 @@ public:
 
     bool processCommand( const std::string& keyword, const std::string& args );
 
-private:
-    // Delete the copy constructor and assignment operator
-    Engine( const Engine& ) = delete;
-
     enum class RegistrationStatus
     {
         Checking,
         OK,
         Error
     };
+
+private:
+    // Delete the copy constructor and assignment operator
+    Engine( const Engine& ) = delete;
 
     // Single board instance for this engine instance
     Board board;
@@ -53,8 +53,15 @@ private:
     void sendUCIOK();
     void sendReadyOK();
     void sendInfo( const std::string& info );
-    void sendRegistration( RegistrationStatus status );
+    void sendRegistration( const RegistrationStatus status );
 
     // Helper functions
     void setRegistrationStatus( RegistrationStatus status );
+
+    const std::map<RegistrationStatus, std::string> statusMap = 
+    {
+        { RegistrationStatus::Checking, "checking" },
+        { RegistrationStatus::OK, "ok" },
+        { RegistrationStatus::Error, "error" }
+    };
 };
